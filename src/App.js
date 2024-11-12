@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { getMovieList, searchMovie } from "./Api";
+import MovieList from "./components/MovieList";
+import SearchBar from "./components/SearchBar";
+import "./App.css";
 
-function App() {
+const App = () => {
+  const [popularMovies, setPopularMovies] = useState([]);
+
+  useEffect(() => {
+    getMovieList().then((result) => {
+      setPopularMovies(result);
+    });
+  }, []);
+
+  const search = async (q) => {
+    if (q.length > 1) {
+      const query = await searchMovie(q);
+      setPopularMovies(query.results);
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>Lychee XXI</h1>
+        <SearchBar onSearch={search} />
+        <div className="Movie-container">
+          <MovieList movies={popularMovies} />
+        </div>
       </header>
     </div>
   );
-}
+};
 
 export default App;
